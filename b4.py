@@ -1,0 +1,133 @@
+product_list = [
+    {
+        "product_id": "SP001",
+        "product_name": "Áo polo nam",
+        "price": 299000,
+        "quantity": 20,
+        "sold": 5
+    },
+    {
+        "product_id": "SP002",
+        "product_name": "Quần kaki nam",
+        "price": 399000,
+        "quantity": 8,
+        "sold": 3
+    },
+    {
+        "product_id": "SP003",
+        "product_name": "Váy công sở nữ",
+        "price": 459000,
+        "quantity": 3,
+        "sold": 7
+    }
+]
+
+while True:
+    print("\n===== HỆ THỐNG VẬN HÀNH CỬA HÀNG YODY =====")
+    print("1. Hiển thị danh sách sản phẩm và cảnh báo tồn kho")
+    print("2. Bán sản phẩm cho khách hàng")
+    print("3. Nhập thêm hàng vào kho")
+    print("4. Xem báo cáo doanh thu")
+    print("5. Thoát chương trình")
+
+    choice = input("Nhập lựa chọn: ")
+
+    match choice:
+        case "1":
+            if not product_list:
+                print("Danh sách sản phẩm hiện đang trống.")
+            else:
+                print("Danh sách sản phẩm hiện tại:")
+                for index, product in enumerate(product_list, start=1):
+                    if product["quantity"] == 0:
+                        status = "Hết hàng"
+                    elif product["quantity"] <= 5:
+                        status = "Sắp hết hàng"
+                    else:
+                        status = "Còn hàng"
+                    print(
+                        f"{index}. Mã SP: {product['product_id']} | "
+                        f"Tên: {product['product_name']} | "
+                        f"Giá: {product['price']} | "
+                        f"Tồn kho: {product['quantity']} | "
+                        f"Đã bán: {product['sold']} | "
+                        f"Trạng thái: {status}"
+                    )
+
+        case "2":
+            product_id = input("Nhập mã sản phẩm khách muốn mua: ").strip().upper()
+            found = False
+            for product in product_list:
+                if product["product_id"] == product_id:
+                    found = True
+                    quantity_buy = input("Nhập số lượng khách mua: ")
+                    if (not quantity_buy.isdigit() or int(quantity_buy) <= 0):
+                        print("Số lượng mua không hợp lệ")
+                        break
+
+                    quantity_buy = int(quantity_buy)
+                    if quantity_buy > product["quantity"]:
+                        print("Số lượng trong kho không đủ để bán")
+                        break
+
+                    product["quantity"] -= quantity_buy
+                    product["sold"] += quantity_buy
+                    total_money = (quantity_buy * product["price"])
+                    print(f"Khách cần thanh toán: {total_money}")
+                    break
+            if not found:
+                print("Không tìm thấy sản phẩm cần bán")
+
+        case "3":
+            product_id = input("Nhập mã sản phẩm cần nhập thêm: ").strip().upper()
+            found = False
+            for product in product_list:
+                if product["product_id"] == product_id:
+                    found = True
+                    quantity_import = input("Nhập số lượng nhập thêm: ")
+
+                    if (not quantity_import.isdigit() or int(quantity_import) <= 0):
+                        print("Số lượng nhập kho không hợp lệ")
+                        break
+
+                    product["quantity"] += int(quantity_import)
+
+                    print("Nhập kho thành công")
+                    break
+
+            if not found:
+                print("Không tìm thấy sản phẩm cần nhập kho")
+
+        case "4":
+            total_revenue = 0
+            best_seller = product_list[0]
+            for product in product_list:
+                if product["sold"] > best_seller["sold"]:
+                    best_seller = product
+
+            if best_seller["sold"] == 0:
+                print("Chưa có doanh thu phát sinh.")
+            else:
+                print("\n===== BÁO CÁO DOANH THU CỬA HÀNG YODY =====")
+                for index, product in enumerate(product_list, start=1):
+                    revenue = (product["price"]* product["sold"])
+                    total_revenue += revenue
+
+                    print(
+                        f"{index}. "
+                        f"{product['product_name']} | "
+                        f"Đã bán: {product['sold']} | "
+                        f"Doanh thu: {revenue}"
+                    )
+                print(f"\nTổng doanh thu: {total_revenue}")
+                print(
+                    f"Sản phẩm bán chạy nhất: "
+                    f"{best_seller['product_name']}"
+                )
+
+        case "5":
+            print("Thoát chương trình.")
+            break
+
+        case _:
+            print("Lựa chọn không hợp lệ, vui lòng nhập lại!")
